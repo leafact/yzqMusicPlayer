@@ -414,24 +414,12 @@ public class MainActivity extends Activity {
 				.append("  专辑名:  " + music.getAlbum() + "\n")
 				.append("  歌手名:  " + music.getArtist() + "\n")
 				.append("  歌曲时长:  " + music.getStringDuration() + "\n")
-				.append("  歌曲大小:" + music.getStringSize() + "\n");
+				.append("  歌曲大小:" + music.getStringSize() + "\n")
+				.append("  歌曲位置:" + music.getUrl() + "\n");;
 		AlertDialog builder = new AlertDialog.Builder(context,
 				AlertDialog.THEME_HOLO_LIGHT).setTitle(music.getTitle())
 				.setMessage(information).create();
-		// 不用布局了R.layout.dialog被废弃了
-		// LinearLayout root = (LinearLayout)
-		// LayoutInflater.from(context).inflate(
-		// R.layout.dialog, null);
-		//
-		// TextView title = (TextView) root
-		// .findViewById(R.id.dialog_title);
-		// TextView main = (TextView) root.findViewById(R.id.dialog_text);
-		// title.setText(music.getTitle());
-		// main.setText(information);
-		// //防止dialog四周有黑色的区域
-		// builder.setView(root, 0, 0, 0, 0);
 		builder.show();
-
 		// 设置builder大小
 		WindowManager.LayoutParams params = builder.getWindow().getAttributes();
 		params.width = 700;
@@ -636,7 +624,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void afterTextChanged(Editable s) {
-			System.out.println(s.toString().trim().length());
 			if (!s.toString().trim().isEmpty()) {
 				List<Music> tempList = new ArrayList<Music>();
 				for (Music temp : localMusicListData) {
@@ -645,7 +632,6 @@ public class MainActivity extends Activity {
 						tempList.add(temp);
 					}
 				}
-				System.out.println(tempList.size());
 				localMusicListData.clear();
 				localMusicListData.addAll(tempList);
 				localMusicListViewAdapter.notifyDataSetChanged();
