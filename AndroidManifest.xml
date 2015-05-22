@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.yzqmusicplayer"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- 语音识别的权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity 
+            android:name="com.yzqmusicplayer.activity.LoadingActivity"
+    			android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            >
+        </activity>
+        <!-- 设置为singletask，返回到这个activity的时候，清空任务栈上面的activity -->
+        <activity
+            android:name="com.yzqmusicplayer.activity.MainActivity"
+            android:label="@string/app_name" 
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoTitleBar"            >
+              <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+            <!-- Translucent.NoTitleBar透明并且看不到app的name-->
+        <activity 
+            android:name="com.yzqmusicplayer.activity.PlayingActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+ >
+            <intent-filter >
+            	    <action  android:name="com.yzqmusicplayer.activity.playing"/>
+					<category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <service 
+            android:name="com.yzqmusicplayer.service.PlayerService"
+            >
+            <!-- 为防止Service被系统回收，可以通过提高优先级解决，1000是最高优先级，数字越小，优先级越低 -->
+            <intent-filter android:priority="1000"></intent-filter>
+            <intent-filter >
+                <action android:name="com.yzqmusicplayer.musicservice"/>
+                
+            </intent-filter>
+            
+        </service>
+    </application>
+
+</manifest>
