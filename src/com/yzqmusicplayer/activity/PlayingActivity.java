@@ -297,7 +297,6 @@ public class PlayingActivity extends Activity {
 				playing_text_starttime.setText(setStartTimeByPosition());
 
 			}
-
 			// 按下的时候暂停播放
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
@@ -314,7 +313,6 @@ public class PlayingActivity extends Activity {
 				handler.removeMessages(1);
 				startprogress();
 				// 开始播放
-
 			}
 
 		}
