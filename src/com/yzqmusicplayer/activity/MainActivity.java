@@ -558,23 +558,14 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.img_musicplaying:
-				// 改成广播改变按钮，后来改为发送广播来完成,不然这样写太累赘了
-				// if (R.drawable.play == (Integer) img_MusicPlaying.getTag()) {
-				// mService.pauseToplay();
-				// img_MusicPlaying.setTag(R.drawable.pause);
-				// img_MusicPlaying.setBackgroundResource(R.drawable.pause);
-				// } else {// 表示此时处于播放状态，按钮为可点击的暂停
-				// mService.playToPause();
-				// img_MusicPlaying.setTag(R.drawable.play);
-				// img_MusicPlaying.setBackgroundResource(R.drawable.play);
-				// }
-				// 这里需要考虑万一没有音乐,即player这个对象不存在,如果这时候按开始,应该打出一个toast,显示未发现音乐
 				if (!mService.isPlayerExist()) {
 					ToastInfo("未找到音乐");
 					// 判断开始暂停，按钮的改变在服务中发送广播
 				} else if (mService.isPause()) {
+					//从暂停到开始
 					mService.pauseToplay();
 				} else {
+					//从开始到暂停
 					mService.playToPause();
 				}
 				break;
