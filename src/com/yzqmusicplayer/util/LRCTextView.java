@@ -108,4 +108,8 @@ public class LRCTextView extends TextView {
 		mOnFocusePaint.setTextSize(50);
 		mOnFocusePaint.setTypeface(Typeface.SANS_SERIF);
 	}
+	public void changeIndex(int i)
+	{
+		mIndex=i;
+	}
 }

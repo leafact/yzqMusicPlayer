@@ -212,6 +212,8 @@ public class PlayingActivity extends Activity {
 			}
 		}
 		final int p = position;
+		//找到对应位置的歌词
+		playing_text_lrc.changeIndex(p);
 		// 起一个子线程进行歌词显示
 		new Thread() {
 			int i = p;
@@ -240,7 +242,7 @@ public class PlayingActivity extends Activity {
 				;
 			}
 		}.start();
-
+		
 	}
 
 	// 每隔一秒做一个任务
