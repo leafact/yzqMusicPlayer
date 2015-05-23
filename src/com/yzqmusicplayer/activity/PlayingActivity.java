@@ -62,8 +62,6 @@ public class PlayingActivity extends Activity {
 	// 广播获得改变的音乐
 	private CurrentMusicReceiver currentReceiver;
 
-	private TreeSet<MyLrc> lrcSet;
-
 	private SharedPreferences sp;
 
 	@Override
@@ -190,6 +188,11 @@ public class PlayingActivity extends Activity {
 		// 设置当前进度条
 		mSeekbar.setProgress(currentPosition = mService.getCurrentPosition());
 		// 初始化歌词
+		initLrcThread(currentPosition);
+	}
+
+	//根据当前歌曲的进度启一个子线程跑时间，一段时间刷新一个空间显示
+	private void initLrcThread(int currentPosition) {
 		LrcUtil lrcUtil = null;
 		try {
 			lrcUtil = new LrcUtil(getAssets().open("baimeigui.txt"));
@@ -197,9 +200,21 @@ public class PlayingActivity extends Activity {
 			e.printStackTrace();
 		}
 		final List<Integer> lrctime = lrcUtil.getTimes();
+		int position = 0;
+		for (int i = 0; i < lrctime.size(); i++) {
+			if (currentPosition < lrctime.get(i)) {
+				position = 0;
+				break;
+			} else if (currentPosition > lrctime.get(i)
+					&& currentPosition < lrctime.get(i + 1)) {
+				position = i;
+				break;
+			}
+		}
+		final int p = position;
 		// 起一个子线程进行歌词显示
 		new Thread() {
-			int i = 0;
+			int i = p;
 
 			public void run() {
 				while (!mService.isPause()) {
@@ -219,10 +234,13 @@ public class PlayingActivity extends Activity {
 						e.printStackTrace();
 					}
 					i++;
+					if (i >= lrctime.size())
+						break;
 				}
 				;
 			}
 		}.start();
+
 	}
 
 	// 每隔一秒做一个任务
@@ -264,21 +282,6 @@ public class PlayingActivity extends Activity {
 		if (currentMusic.getDuration() <= currentPosition) {
 			endprogressTimer();
 		}
-	}
-
-	// 同时找到对应的歌词
-	private void startLrc() {
-		Iterator<MyLrc> it = lrcSet.iterator();
-		while (it.hasNext()) {
-			MyLrc my = it.next();
-			if (currentPosition < my.getTime()) {
-				playing_text_lrc.setText(my.getLyric());
-				System.out.println(my.getTime() + " " + my.getLyric());
-				break;
-			}
-		}
-		// 利用scrollview是可以让他移动的,但是要写在线程里,给另外一个handler的message,执行周期要短一点,不然一卡一卡的
-		// playing_scorlltext_lrc.scrollBy(0, 100);
 	}
 
 	private String setStartTimeByPosition() {
@@ -478,6 +481,7 @@ public class PlayingActivity extends Activity {
 			if ("com.yzqmusicplayer.activity.changepauseToplayButton"
 					.equals(intent.getAction())) {
 				playing_imgbtn_play.setBackgroundResource(R.drawable.pausebtn);
+				initLrcThread(currentPosition);
 			}
 			if ("com.yzqmusicplayer.activity.changeplayTopauseButton"
 					.equals(intent.getAction())) {

@@ -98,14 +98,14 @@ public class LRCTextView extends TextView {
 
 		mLoseFocusPaint = new Paint();
 		mLoseFocusPaint.setAntiAlias(true);
-		mLoseFocusPaint.setTextSize(22);
+		mLoseFocusPaint.setTextSize(30);
 		mLoseFocusPaint.setColor(Color.BLACK);
 		mLoseFocusPaint.setTypeface(Typeface.SERIF);
 
 		mOnFocusePaint = new Paint();
 		mOnFocusePaint.setAntiAlias(true);
 		mOnFocusePaint.setColor(Color.RED);
-		mOnFocusePaint.setTextSize(30);
+		mOnFocusePaint.setTextSize(50);
 		mOnFocusePaint.setTypeface(Typeface.SANS_SERIF);
 	}
 }
