@@ -2,230 +2,203 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-        android:background="@drawable/background"
-    >
+    android:background="@drawable/background" >
 
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="40dp"
-	    android:orientation="horizontal" 
-	    android:background="@null"
-	    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@null"
+        android:orientation="horizontal" >
 
-	    <ImageButton
-	        android:id="@+id/playing_imgbtn_back"
-	        android:layout_width="30dp"
-	        android:layout_height="30dp"
-	        android:layout_marginLeft="15dp"
-	        android:layout_marginTop="5dp"
-	        android:layout_marginBottom="5dp"
-	        android:layout_marginRight="5dp"
-	        android:src="@drawable/action_back_normal"
-	        android:background="@null" />
-	    <!-- 顶部的歌曲名和演唱者 -->
+        <ImageButton
+            android:id="@+id/playing_imgbtn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/action_back_normal" />
+        <!-- 顶部的歌曲名和演唱者 -->
 
-	    <LinearLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
-	        android:layout_marginLeft="10dp"
-	        android:layout_weight="1"
-	        android:orientation="vertical" 
-	        >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-	        <TextView
-	            android:id="@+id/playing_text_song"
-	            android:layout_width="fill_parent"
-	            android:layout_height="20dp"
-	            android:text="playing_text_song"
-	            android:singleLine="true"
-	            android:textColor="#ffffff"
-	            android:textSize="16dp"
-	             />
+            <TextView
+                android:id="@+id/playing_text_song"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:singleLine="true"
+                android:text="playing_text_song"
+                android:textColor="#ffffff"
+                android:textSize="16dp" />
 
-	        <TextView
-	            android:id="@+id/playing_text_singer"
-	            android:layout_width="fill_parent"
-	            android:layout_height="20dp"
-	            android:text="playing_text_singer" 
-	            android:singleLine="true"
-	            android:textColor="#ffffff"
-	            />
-	    </LinearLayout>
-	         <ImageButton 
-	          android:id="@+id/playing_imgbtn_collect"
-	           android:layout_width="fill_parent"
-	          android:layout_height="fill_parent"
-	           android:layout_weight="2"
-	            android:layout_marginTop="5dp"
-	        android:layout_marginBottom="5dp"
-	        android:layout_marginRight="5dp"
-	          android:background="@null"/>
-	     
-	    <ImageButton 
-	          android:id="@+id/playing_imgbtn_info"
-	          android:layout_width="fill_parent"
-	          android:layout_height="fill_parent"
-	           android:layout_weight="2"
-	        android:layout_marginTop="5dp"
-	        android:layout_marginBottom="5dp"
-	        android:layout_marginRight="5dp"
-	          android:src="@drawable/bg_button_musicinfo"
-	          android:background="@null"
-	        />
-	</LinearLayout>
-	
-	
-	    <ScrollView 
-	        android:id="@+id/playing_srollview_lrc"
-	        android:layout_width="300dp"
-	        android:layout_height="300dp"
-	        android:layout_centerInParent="true"
-	        android:scrollbars="none"
-	        >
-				<!-- 放歌词的TextView -->
-	        <TextView 
-	        android:id="@+id/playing_textview_lrc"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:textColor="#ffffff"
-	        android:gravity="center"
-	     	android:textSize="30sp"
-	            />
-	        
-	    </ScrollView>
-	
-		<!-- 一个垂直布局中包含两个水平布局 -->
+            <TextView
+                android:id="@+id/playing_text_singer"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:singleLine="true"
+                android:text="playing_text_singer"
+                android:textColor="#ffffff" />
+        </LinearLayout>
 
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="100dp"
-	    android:layout_alignParentBottom="true"
-	    android:background="@null"
-	    android:orientation="vertical" >
-				<!-- 显示进度条 -->
-	    <RelativeLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="30dp"
-	        >
-	        <TextView 
-	            android:id="@+id/playing_text_starttime"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_margin="5dp"
-	            android:layout_alignParentLeft="true"
-	           	android:textColor="#ffffff"
-	            android:text="00:00"
-	            />
-	        	
-	               <TextView 
-	            android:id="@+id/playing_text_endtime"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_margin="5dp"
-	            android:layout_alignParentRight="true"
-	           	android:textColor="#ffffff"
-	            android:text="00:00"/>
-	            
-	            	<SeekBar 
-        	android:id="@+id/seekBar_PlayProgress"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-			android:layout_alignLeft="@id/playing_text_starttime"	      
-			android:layout_alignRight="@id/playing_text_endtime"  
-	        android:layout_marginLeft="30dp"
-	        android:layout_marginRight="30dp"
-	        android:paddingLeft="8dp"
-	        android:paddingRight="8dp"
-	        android:paddingTop="8dp"
-	        android:progressDrawable="@drawable/ic_seekbar"
-	        android:thumb="@drawable/thumb_bar"
-	        android:thumbOffset="0dip"
-	    			/>
-	            
-	        
-	    </RelativeLayout>
-	    
-	    
-	    <!-- 显示，播放方式，上一首歌，开始，下一首歌 -->
-	      <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="70dp"
-	        android:background="@null"
-	        android:orientation="horizontal"
-	         >
-	            <LinearLayout 
-	                    android:layout_height="match_parent"
-	                    android:layout_width="match_parent"
-	                     android:layout_weight="2"
-	                     android:orientation="horizontal"
-	                    >
-	                  <ImageButton 
-	                android:id="@+id/playing_imgbtn_rule"
-	                android:layout_height="match_parent"
-	                android:layout_width="match_parent"
-	                android:layout_marginLeft="15dp"
-	                android:layout_marginRight="15dp"
-	                android:layout_marginTop="20dp"
-	                android:layout_marginBottom="20dp"
-	                    android:background="@drawable/bt_widget_mode_order"
-	                />	
-	                
-	            </LinearLayout>
-	          
-	          
-	                <LinearLayout 
-	                    android:layout_height="match_parent"
-	                    android:layout_width="match_parent"
-	                     android:layout_weight="1"
-	                     android:orientation="horizontal"
-	                    >
-	                        <ImageButton 
-	                android:id="@+id/playing_imgbtn_pre"
-	                android:layout_height="40dp"
-	                android:layout_width="30dp"
-	                android:layout_weight="1"
-	                android:background="@drawable/previousbtn"
-	                android:layout_gravity="center_vertical"
-	                     android:layout_marginLeft="10dp"
-	                />	
-	            <ImageButton 
-	                android:id="@+id/playing_imgbtn_play"
-	                android:layout_height="60dp"
-	                android:layout_width="50dp"
-	                android:layout_weight="1"
-	                 android:background="@drawable/playbtn"
-	                android:layout_gravity="center_vertical"
-	                 android:layout_marginLeft="10dp"
-	                />	
-	            <ImageButton 
-	                android:id="@+id/playing_imgbtn_next"
-	               android:layout_height="40dp"
-	                android:layout_width="30dp"
-	                android:layout_weight="1"
-	          	    android:background="@drawable/nextbtn"
-	          	    android:layout_gravity="center_vertical"
-	          	         android:layout_marginLeft="10dp"
-	                />	
-	                    
-	                    
-	                </LinearLayout>
-	           <LinearLayout 
-	                    android:layout_height="match_parent"
-	                    android:layout_width="match_parent"
-	                     android:layout_weight="2"
-	                     android:orientation="horizontal"
-	                    >
-	            <ImageButton 
-	                android:id="@+id/playing_imgbtn_rec"
-	                android:layout_height="match_parent"
-	                android:layout_width="wrap_content"
-	                     android:layout_marginLeft="10dp"
-	                      android:background="@null"
-	                />
-	            </LinearLayout>	
-	    </LinearLayout>
-	    
-	</LinearLayout>
-	
-	
+        <ImageButton
+            android:id="@+id/playing_imgbtn_collect"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="2"
+            android:background="@null" />
+
+        <ImageButton
+            android:id="@+id/playing_imgbtn_info"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="2"
+            android:background="@null"
+            android:src="@drawable/bg_button_musicinfo" />
+    </LinearLayout>
+
+    <!-- 放歌词的TextView -->
+
+    <com.yzqmusicplayer.util.LRCTextView
+        android:id="@+id/playing_textview_lrc"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true" />
+
+    <!-- 一个垂直布局中包含两个水平布局 -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:background="@null"
+        android:orientation="vertical" >
+
+        <!-- 显示进度条 -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp" >
+
+            <TextView
+                android:id="@+id/playing_text_starttime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="5dp"
+                android:text="00:00"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/playing_text_endtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_margin="5dp"
+                android:text="00:00"
+                android:textColor="#ffffff" />
+
+            <SeekBar
+                android:id="@+id/seekBar_PlayProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/playing_text_starttime"
+                android:layout_alignRight="@id/playing_text_endtime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:progressDrawable="@drawable/ic_seekbar"
+                android:thumb="@drawable/thumb_bar"
+                android:thumbOffset="0dip" />
+        </RelativeLayout>
+
+        <!-- 显示，播放方式，上一首歌，开始，下一首歌 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@null"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal" >
+
+                <ImageButton
+                    android:id="@+id/playing_imgbtn_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bt_widget_mode_order" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <ImageButton
+                    android:id="@+id/playing_imgbtn_pre"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/previousbtn" />
+
+                <ImageButton
+                    android:id="@+id/playing_imgbtn_play"
+                    android:layout_width="50dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/playbtn" />
+
+                <ImageButton
+                    android:id="@+id/playing_imgbtn_next"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/nextbtn" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal" >
+
+                <ImageButton
+                    android:id="@+id/playing_imgbtn_rec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:background="@null" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
 </RelativeLayout>

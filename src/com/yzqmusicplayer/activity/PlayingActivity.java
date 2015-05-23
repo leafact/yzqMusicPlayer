@@ -2,31 +2,27 @@ package com.yzqmusicplayer.activity;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -37,6 +33,7 @@ import com.yzqmusicplayer.model.Music;
 import com.yzqmusicplayer.model.MyLrc;
 import com.yzqmusicplayer.service.PlayerService;
 import com.yzqmusicplayer.util.Iinfo;
+import com.yzqmusicplayer.util.LRCTextView;
 import com.yzqmusicplayer.util.LrcUtil;
 import com.yzqmusicplayer.util.Utils;
 
@@ -47,15 +44,15 @@ public class PlayingActivity extends Activity {
 	private Music currentMusic = mService.record
 			.get(mService.record.size() - 1);
 	// 上面的back按钮，info按钮，我的收藏
-	private ImageButton playing_imgbtn_back, playing_imgbtn_info,playing_imgbtn_collect;
+	private ImageButton playing_imgbtn_back, playing_imgbtn_info,
+			playing_imgbtn_collect;
 
 	private ImageButton playing_imgbtn_pre, playing_imgbtn_play,
 			playing_imgbtn_next, playing_imgbtn_rule;
 	// 上面的歌曲，歌手，下面的歌曲播放时间，歌曲播放总时长
 	private TextView playing_text_song, playing_text_singer,
-			playing_text_starttime, playing_text_endtime, playing_text_lrc;
-	private ScrollView playing_scorlltext_lrc;
-	// private LRCTextView playing_text_lrc;
+			playing_text_starttime, playing_text_endtime;
+	private LRCTextView playing_text_lrc;
 	// 初始化前一首歌的位置
 	public static int preMusic = 0;
 	// 进度条的位置
@@ -102,14 +99,13 @@ public class PlayingActivity extends Activity {
 	private void initView() {
 		playing_imgbtn_back = (ImageButton) findViewById(R.id.playing_imgbtn_back);
 		playing_imgbtn_info = (ImageButton) findViewById(R.id.playing_imgbtn_info);
-		playing_imgbtn_collect=(ImageButton) findViewById(R.id.playing_imgbtn_collect);
-		
+		playing_imgbtn_collect = (ImageButton) findViewById(R.id.playing_imgbtn_collect);
+
 		playing_text_song = (TextView) findViewById(R.id.playing_text_song);
 		playing_text_singer = (TextView) findViewById(R.id.playing_text_singer);
 		playing_text_starttime = (TextView) findViewById(R.id.playing_text_starttime);
 		playing_text_endtime = (TextView) findViewById(R.id.playing_text_endtime);
-		playing_text_lrc = (TextView) findViewById(R.id.playing_textview_lrc);
-		playing_scorlltext_lrc=(ScrollView) findViewById(R.id.playing_srollview_lrc);
+		playing_text_lrc = (LRCTextView) findViewById(R.id.playing_textview_lrc);
 		playing_imgbtn_pre = (ImageButton) findViewById(R.id.playing_imgbtn_pre);
 		playing_imgbtn_play = (ImageButton) findViewById(R.id.playing_imgbtn_play);
 		playing_imgbtn_next = (ImageButton) findViewById(R.id.playing_imgbtn_next);
@@ -136,27 +132,30 @@ public class PlayingActivity extends Activity {
 		} else {
 			playing_imgbtn_play.setBackgroundResource(R.drawable.pause);
 		}
-		//通过数据库判断当前歌曲是否已经加入我的收藏
-		if(Utils.getCollectMusicById(this, currentMusic)!=0)
-		{
-			playing_imgbtn_collect.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
-		}else
-		{
-			playing_imgbtn_collect.setBackgroundResource(R.drawable.actioninfo_addfavorite);
+		// 通过数据库判断当前歌曲是否已经加入我的收藏
+		if (Utils.getCollectMusicById(this, currentMusic) != 0) {
+			playing_imgbtn_collect
+					.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
+		} else {
+			playing_imgbtn_collect
+					.setBackgroundResource(R.drawable.actioninfo_addfavorite);
 		}
-	
+
 		// 判断sp里面存储的播放方式,然后显示对应的图标
 		sp = getSharedPreferences("playing_info", MODE_PRIVATE);
 		int currentrule = sp.getInt("playing_rule", Iinfo.PLAY_RULE_ORDER);
 		switch (currentrule) {
 		case Iinfo.PLAY_RULE_ORDER:
-			playing_imgbtn_rule.setBackgroundResource(R.drawable.bt_widget_mode_order);
+			playing_imgbtn_rule
+					.setBackgroundResource(R.drawable.bt_widget_mode_order);
 			break;
 		case Iinfo.PLAY_RULE_SINGLE:
-			playing_imgbtn_rule.setBackgroundResource(R.drawable.bt_widget_mode_singlecycle);
+			playing_imgbtn_rule
+					.setBackgroundResource(R.drawable.bt_widget_mode_singlecycle);
 			break;
 		case Iinfo.PLAY_RULE_RANDOM:
-			playing_imgbtn_rule.setBackgroundResource(R.drawable.bt_widget_mode_shuffle);
+			playing_imgbtn_rule
+					.setBackgroundResource(R.drawable.bt_widget_mode_shuffle);
 			break;
 		}
 		handler = new Handler() {
@@ -191,279 +190,303 @@ public class PlayingActivity extends Activity {
 		// 设置当前进度条
 		mSeekbar.setProgress(currentPosition = mService.getCurrentPosition());
 		// 初始化歌词
+		LrcUtil lrcUtil = null;
 		try {
-			lrcSet = LrcUtil.Time2LRC(getAssets().open("lrc.txt"));
-
-//			Iterator<MyLrc> it = lrcSet.iterator();
-//			StringBuffer sb=new StringBuffer();
-//			while (it.hasNext()) {
-//				MyLrc my = it.next();
-//				sb.append(my.getLyric()+"\n");
-//			}
-//			playing_text_lrc.setText(sb);
-
+			lrcUtil = new LrcUtil(getAssets().open("baimeigui.txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		final List<Integer> lrctime = lrcUtil.getTimes();
+		// 起一个子线程进行歌词显示
+		new Thread() {
+			int i = 0;
+
+			public void run() {
+				while (!mService.isPause()) {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							playing_text_lrc.invalidate();
+						}
+					});
+					try {
+						if (i == 0)
+							Thread.sleep(lrctime.get(i));
+						else {
+							Thread.sleep(lrctime.get(i + 1) - lrctime.get(i));
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					i++;
+				}
+				;
+			}
+		}.start();
 	}
 
 	// 每隔一秒做一个任务
-		private void startprogress() {
-			Timer timer = new Timer();
-			if (timertask != null) {
-				timertask.cancel();
-				timertask = null;
-			}
-			timertask = new TimerTask() {
-				@Override
-				public void run() {
-					if (!mService.isPause()) {
-						handler.sendEmptyMessage(UPDATE_STARTTIME_AND_SEEKBOR);
-					} else {
-						// 上面虽然暂停了，但是线程还在跑
-						System.out.println("暂停了但是我还在跑" + Thread.currentThread());
-					}
+	private void startprogress() {
+		Timer timer = new Timer();
+		if (timertask != null) {
+			timertask.cancel();
+			timertask = null;
+		}
+		timertask = new TimerTask() {
+			@Override
+			public void run() {
+				if (!mService.isPause()) {
+					handler.sendEmptyMessage(UPDATE_STARTTIME_AND_SEEKBOR);
+				} else {
+					// 上面虽然暂停了，但是线程还在跑
+					System.out.println("暂停了但是我还在跑" + Thread.currentThread());
 				}
-			};
-			// 每500毫秒执行一次,防止有歌词短,直接被跳过,即显示不出来
-			timer.schedule(timertask, 0, Iinfo.PLAY_TIMERTASK_SEEKBARTIME);
-		}
+			}
+		};
+		// 每500毫秒执行一次,防止有歌词短,直接被跳过,即显示不出来
+		timer.schedule(timertask, 0, Iinfo.PLAY_TIMERTASK_SEEKBARTIME);
+	}
 
-		private void endprogressTimer() {
-			if (timertask != null) {
-				timertask.cancel();
-				timertask = null;
+	private void endprogressTimer() {
+		if (timertask != null) {
+			timertask.cancel();
+			timertask = null;
+		}
+	}
+
+	private void setStartTextAndSeekBarAndLRC() {
+		currentPosition += Iinfo.PLAY_TIMERTASK_SEEKBARTIME;
+		mSeekbar.setProgress(currentPosition);
+		playing_text_starttime.setText(setStartTimeByPosition());
+		// 开始歌词同步
+		// startLrc();
+		// 超出了最大值，不再循环
+		if (currentMusic.getDuration() <= currentPosition) {
+			endprogressTimer();
+		}
+	}
+
+	// 同时找到对应的歌词
+	private void startLrc() {
+		Iterator<MyLrc> it = lrcSet.iterator();
+		while (it.hasNext()) {
+			MyLrc my = it.next();
+			if (currentPosition < my.getTime()) {
+				playing_text_lrc.setText(my.getLyric());
+				System.out.println(my.getTime() + " " + my.getLyric());
+				break;
 			}
 		}
+		// 利用scrollview是可以让他移动的,但是要写在线程里,给另外一个handler的message,执行周期要短一点,不然一卡一卡的
+		// playing_scorlltext_lrc.scrollBy(0, 100);
+	}
 
-		private void setStartTextAndSeekBarAndLRC() {
-			currentPosition += Iinfo.PLAY_TIMERTASK_SEEKBARTIME;
-			mSeekbar.setProgress(currentPosition);
+	private String setStartTimeByPosition() {
+		int time = currentPosition / 1000;
+		int min = time / 60;
+		int second = time - min * 60;
+		String minStr = min < 10 ? ("0" + min) : (min + "");
+		String sedStr = second < 10 ? ("0" + second) : (second + "");
+		return minStr + ":" + sedStr;
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent();
+		intent.setClass(this, MainActivity.class);
+		startActivity(intent);
+		overridePendingTransition(0, R.anim.out_from_right);
+		finish();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(currentReceiver);
+	}
+
+	// 监听那个按钮移动的位置
+	class SeekBarChangeListener implements OnSeekBarChangeListener {
+
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress,
+				boolean fromUser) {
+			currentPosition = progress;
 			playing_text_starttime.setText(setStartTimeByPosition());
-			// 开始歌词同步
-			//startLrc();
-			// 超出了最大值，不再循环
-			if (currentMusic.getDuration() <= currentPosition) {
+
+		}
+
+		// 按下的时候暂停播放
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+			mService.playToPause();
+		}
+
+		// 放开按钮的时候seekto播放，待测试
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			// 定位，注意里面的是毫秒
+			System.out.println(currentPosition);
+			mService.seekTo(currentPosition);
+			mService.pauseToplay();
+			handler.removeMessages(1);
+			startprogress();
+			// 开始播放
+		}
+
+	}
+
+	class TopViewListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.playing_imgbtn_back:
+				Intent intent = new Intent();
+				intent.setClass(PlayingActivity.this, MainActivity.class);
+				startActivity(intent);
+				overridePendingTransition(0, R.anim.out_from_right);
+				finish();
+				break;
+			case R.id.playing_imgbtn_info:
+				MainActivity.showDetailDialog(currentMusic,
+						PlayingActivity.this);
+				break;
+			case R.id.playing_imgbtn_collect:
+				if (Utils.getCollectMusicById(PlayingActivity.this,
+						currentMusic) == 0) {
+					ToastInfo(R.string.add_collect);
+					Utils.insertCollection(PlayingActivity.this, currentMusic);
+					playing_imgbtn_collect
+							.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
+				} else {
+					ToastInfo(R.string.cancel_collect);
+					playing_imgbtn_collect
+							.setBackgroundResource(R.drawable.actioninfo_addfavorite);
+					Utils.deleteCollectionById(PlayingActivity.this,
+							currentMusic);
+				}
+				sendBroadcast(new Intent(
+						"com.yzq.musicplayer.notifyCollectDataChanged"));
+			}
+		}
+	}
+
+	class BottomViewListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.playing_imgbtn_pre:
+				// 改变音乐如果有两首歌以上，放前面一首，如果只有一首歌，那么就只放当然的这一首
+				if (preMusic > 0) {
+					preMusic--;
+				}
+				// preMusic=(preMusic==0)?0:(preMusic-1);
+				System.out.println(preMusic);
+				mService.play(mService.record.get(preMusic));
+				// 发送广播改变主界面的数值
+				// Intent preIntent=new
+				// Intent("com.yzqmusicplayer.activity.playPremusic");
+				// preIntent.putExtra("premusic",
+				// mService.record.get(preMusic));
+				// sendBroadcast(preIntent);
+				break;
+			case R.id.playing_imgbtn_play:
+				// 判断开始暂停，按钮的改变在服务中发送广播
+				if (mService.isPause()) {
+					mService.pauseToplay();
+				} else {
+					mService.playToPause();
+				}
+				break;
+			case R.id.playing_imgbtn_next:
+				// 播放下一首歌
+				sendBroadcast(new Intent(
+						"com.yzqmusicplayer.activity.playnextmusic"));
+				break;
+			// 弹出一个popwindow,进行操作,然后存储
+			case R.id.playing_imgbtn_rule:
+				View root = PlayingActivity.this.getLayoutInflater().inflate(
+						R.layout.playing_rule, null);
+				final PopupWindow window = new PopupWindow(root, 200, 200);
+				window.setFocusable(true);// 设置焦点
+				window.setOutsideTouchable(true);// 设置以外的焦点
+				window.update();// 刷新
+				window.setBackgroundDrawable(new BitmapDrawable());
+				window.showAsDropDown(v);
+				window.showAtLocation(findViewById(R.id.playing_imgbtn_rule),
+						Gravity.LEFT, 20, 10);
+				LinearLayout playing_rule_order = (LinearLayout) root
+						.findViewById(R.id.playing_rule_order);
+				LinearLayout playing_rule_random = (LinearLayout) root
+						.findViewById(R.id.playing_rule_random);
+				LinearLayout playing_rule_single = (LinearLayout) root
+						.findViewById(R.id.playing_rule_single);
+				playing_rule_order.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						window.dismiss();
+						// 改变对应背景图片然后存储对应信息
+						sp.edit().putInt("playing_rule", Iinfo.PLAY_RULE_ORDER)
+								.commit();
+						playing_imgbtn_rule
+								.setBackgroundResource(R.drawable.bt_widget_mode_order);
+					}
+				});
+				playing_rule_random.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						window.dismiss();
+						sp.edit()
+								.putInt("playing_rule", Iinfo.PLAY_RULE_RANDOM)
+								.commit();
+						playing_imgbtn_rule
+								.setBackgroundResource(R.drawable.bt_widget_mode_shuffle);
+					}
+				});
+				playing_rule_single.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						window.dismiss();
+						sp.edit()
+								.putInt("playing_rule", Iinfo.PLAY_RULE_SINGLE)
+								.commit();
+						playing_imgbtn_rule
+								.setBackgroundResource(R.drawable.bt_widget_mode_singlecycle);
+					}
+				});
+				break;
+			}
+		}
+
+	}
+
+	class CurrentMusicReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if ("com.yzqmusicplayer.activity.changeSongAndSinger".equals(intent
+					.getAction())) {
+				// 改变音乐
+				currentMusic = mService.record.get(mService.record.size() - 1);
+				playing_text_song.setText(currentMusic.getTitle());
+				playing_text_singer.setText(currentMusic.getArtist());
+				playing_text_endtime.setText(currentMusic.getStringDuration());
 				endprogressTimer();
-			}
-		}
-
-		// 同时找到对应的歌词
-		private void startLrc() {
-			Iterator<MyLrc> it = lrcSet.iterator();
-			while (it.hasNext()) {
-				MyLrc my = it.next();
-				if (currentPosition < my.getTime()) {
-					playing_text_lrc.setText(my.getLyric());
-					System.out.println(my.getTime() + " " + my.getLyric());
-					break;
-				}
-			}
-			//利用scrollview是可以让他移动的,但是要写在线程里,给另外一个handler的message,执行周期要短一点,不然一卡一卡的
-		//	playing_scorlltext_lrc.scrollBy(0, 100);
-		}
-
-		private String setStartTimeByPosition() {
-			int time = currentPosition / 1000;
-			int min = time / 60;
-			int second = time - min * 60;
-			String minStr = min < 10 ? ("0" + min) : (min + "");
-			String sedStr = second < 10 ? ("0" + second) : (second + "");
-			return minStr + ":" + sedStr;
-		}
-
-		@Override
-		public void onBackPressed() {
-			Intent intent = new Intent();
-			intent.setClass(this, MainActivity.class);
-			startActivity(intent);
-			overridePendingTransition(0, R.anim.out_from_right);
-			finish();
-		}
-
-		@Override
-		protected void onDestroy() {
-			super.onDestroy();
-			unregisterReceiver(currentReceiver);
-		}
-
-		// 监听那个按钮移动的位置
-		class SeekBarChangeListener implements OnSeekBarChangeListener {
-
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				currentPosition = progress;
-				playing_text_starttime.setText(setStartTimeByPosition());
-
-			}
-			// 按下的时候暂停播放
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
-				mService.playToPause();
-			}
-
-			// 放开按钮的时候seekto播放，待测试
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				// 定位，注意里面的是毫秒
-				System.out.println(currentPosition);
-				mService.seekTo(currentPosition);
-				mService.pauseToplay();
-				handler.removeMessages(1);
+				initSeekBar();
 				startprogress();
-				// 开始播放
 			}
-
-		}
-
-		class TopViewListener implements OnClickListener {
-			@Override
-			public void onClick(View v) {
-				switch (v.getId()) {
-				case R.id.playing_imgbtn_back:
-					Intent intent = new Intent();
-					intent.setClass(PlayingActivity.this, MainActivity.class);
-					startActivity(intent);
-					overridePendingTransition(0, R.anim.out_from_right);
-					finish();
-					break;
-				case R.id.playing_imgbtn_info:
-					MainActivity.showDetailDialog(currentMusic,PlayingActivity.this );
-					break;
-				case R.id.playing_imgbtn_collect:
-					if(Utils.getCollectMusicById(PlayingActivity.this, currentMusic)==0)
-					{
-						ToastInfo(R.string.add_collect);
-						Utils.insertCollection(PlayingActivity.this, currentMusic);
-						playing_imgbtn_collect.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
-					}else
-					{
-						ToastInfo(R.string.cancel_collect);
-						playing_imgbtn_collect.setBackgroundResource(R.drawable.actioninfo_addfavorite);
-						Utils.deleteCollectionById(PlayingActivity.this, currentMusic);
-					}
-					sendBroadcast(new Intent("com.yzq.musicplayer.notifyCollectDataChanged"));
-				}
+			if ("com.yzqmusicplayer.activity.changepauseToplayButton"
+					.equals(intent.getAction())) {
+				playing_imgbtn_play.setBackgroundResource(R.drawable.pausebtn);
+			}
+			if ("com.yzqmusicplayer.activity.changeplayTopauseButton"
+					.equals(intent.getAction())) {
+				playing_imgbtn_play.setBackgroundResource(R.drawable.playbtn);
 			}
 		}
+	}
 
-		class BottomViewListener implements OnClickListener {
-
-			@Override
-			public void onClick(View v) {
-				switch (v.getId()) {
-				case R.id.playing_imgbtn_pre:
-					// 改变音乐如果有两首歌以上，放前面一首，如果只有一首歌，那么就只放当然的这一首
-					if (preMusic > 0) {
-						preMusic--;
-					}
-					// preMusic=(preMusic==0)?0:(preMusic-1);
-					System.out.println(preMusic);
-					mService.play(mService.record.get(preMusic));
-					// 发送广播改变主界面的数值
-					// Intent preIntent=new
-					// Intent("com.yzqmusicplayer.activity.playPremusic");
-					// preIntent.putExtra("premusic",
-					// mService.record.get(preMusic));
-					// sendBroadcast(preIntent);
-					break;
-				case R.id.playing_imgbtn_play:
-					// 判断开始暂停，按钮的改变在服务中发送广播
-					if (mService.isPause()) {
-						mService.pauseToplay();
-					} else {
-						mService.playToPause();
-					}
-					break;
-				case R.id.playing_imgbtn_next:
-					// 播放下一首歌
-					sendBroadcast(new Intent(
-							"com.yzqmusicplayer.activity.playnextmusic"));
-					break;
-				// 弹出一个popwindow,进行操作,然后存储
-				case R.id.playing_imgbtn_rule:
-					View root = PlayingActivity.this.getLayoutInflater().inflate(
-							R.layout.playing_rule, null);
-					final PopupWindow window = new PopupWindow(root, 200, 200);
-					window.setFocusable(true);// 设置焦点
-					window.setOutsideTouchable(true);// 设置以外的焦点
-					window.update();// 刷新
-					window.setBackgroundDrawable(new BitmapDrawable());
-					window.showAsDropDown(v);
-					window.showAtLocation(findViewById(R.id.playing_imgbtn_rule),
-							Gravity.LEFT, 20, 10);
-					LinearLayout playing_rule_order = (LinearLayout) root
-							.findViewById(R.id.playing_rule_order);
-					LinearLayout playing_rule_random = (LinearLayout) root
-							.findViewById(R.id.playing_rule_random);
-					LinearLayout playing_rule_single = (LinearLayout) root
-							.findViewById(R.id.playing_rule_single);
-					playing_rule_order.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							window.dismiss();
-							// 改变对应背景图片然后存储对应信息
-							sp.edit().putInt("playing_rule", Iinfo.PLAY_RULE_ORDER)
-									.commit();
-							playing_imgbtn_rule
-									.setBackgroundResource(R.drawable.bt_widget_mode_order);
-						}
-					});
-					playing_rule_random.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							window.dismiss();
-							sp.edit()
-									.putInt("playing_rule", Iinfo.PLAY_RULE_RANDOM)
-									.commit();
-							playing_imgbtn_rule
-									.setBackgroundResource(R.drawable.bt_widget_mode_shuffle);
-						}
-					});
-					playing_rule_single.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							window.dismiss();
-							sp.edit()
-									.putInt("playing_rule", Iinfo.PLAY_RULE_SINGLE)
-									.commit();
-							playing_imgbtn_rule
-									.setBackgroundResource(R.drawable.bt_widget_mode_singlecycle);
-						}
-					});
-					break;
-				}
-			}
-
-		}
-
-		class CurrentMusicReceiver extends BroadcastReceiver {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if ("com.yzqmusicplayer.activity.changeSongAndSinger".equals(intent
-						.getAction())) {
-					// 改变音乐
-					currentMusic = mService.record.get(mService.record.size() - 1);
-					playing_text_song.setText(currentMusic.getTitle());
-					playing_text_singer.setText(currentMusic.getArtist());
-					playing_text_endtime.setText(currentMusic.getStringDuration());
-					endprogressTimer();
-					initSeekBar();
-					startprogress();
-				}
-				if ("com.yzqmusicplayer.activity.changepauseToplayButton"
-						.equals(intent.getAction())) {
-					playing_imgbtn_play.setBackgroundResource(R.drawable.pausebtn);
-				}
-				if ("com.yzqmusicplayer.activity.changeplayTopauseButton"
-						.equals(intent.getAction())) {
-					playing_imgbtn_play.setBackgroundResource(R.drawable.playbtn);
-				}
-			}
-		}
-		private void ToastInfo(int info)
-		{
-			Toast.makeText(PlayingActivity.this, info, Toast.LENGTH_SHORT).show();
-		}
+	private void ToastInfo(int info) {
+		Toast.makeText(PlayingActivity.this, info, Toast.LENGTH_SHORT).show();
+	}
 }
