@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyMusicHelper extends SQLiteOpenHelper {
-	
+
 	public MyMusicHelper(Context context, String name, CursorFactory factory,
 			int version) {
 		super(context, name, factory, version);
@@ -18,6 +18,7 @@ public class MyMusicHelper extends SQLiteOpenHelper {
 		db.execSQL("drop table  if  exists  music_info");
 		db.execSQL("drop table  if  exists collection_info");
 		StringBuffer sql = new StringBuffer();
+
 		sql.append("create table music_info(").append("_id integer,")
 				.append("_tractid integer,").append("_title text,")
 				.append("_album text,").append("_artist text,")
