@@ -1,6 +1,6 @@
 package com.yzqmusicplayer.model;
 
-public class MyLrc implements Comparable{
+public class MyLrc implements Comparable<Object>{
 	private int time;
 	private String lyric;
 	public int getTime() {

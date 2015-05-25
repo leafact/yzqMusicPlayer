@@ -134,10 +134,10 @@ public class PlayingActivity extends Activity {
 		// 通过数据库判断当前歌曲是否已经加入我的收藏
 		if (Utils.getCollectMusicById(this, currentMusic) != 0) {
 			playing_imgbtn_collect
-					.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
+					.setImageResource(R.drawable.actioninfo_haveaddedfavorite);
 		} else {
 			playing_imgbtn_collect
-					.setBackgroundResource(R.drawable.actioninfo_addfavorite);
+					.setImageResource(R.drawable.actioninfo_addfavorite);
 		}
 
 		// 判断sp里面存储的播放方式,然后显示对应的图标
@@ -367,11 +367,11 @@ public class PlayingActivity extends Activity {
 					ToastInfo(R.string.add_collect);
 					Utils.insertCollection(PlayingActivity.this, currentMusic);
 					playing_imgbtn_collect
-							.setBackgroundResource(R.drawable.actioninfo_haveaddedfavorite);
+							.setImageResource(R.drawable.actioninfo_haveaddedfavorite);
 				} else {
 					ToastInfo(R.string.cancel_collect);
 					playing_imgbtn_collect
-							.setBackgroundResource(R.drawable.actioninfo_addfavorite);
+							.setImageResource(R.drawable.actioninfo_addfavorite);
 					Utils.deleteCollectionById(PlayingActivity.this,
 							currentMusic);
 				}

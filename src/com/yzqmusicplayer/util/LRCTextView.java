@@ -53,7 +53,7 @@ public class LRCTextView extends TextView {
 		if (p == null) {
 			p=new Paint();
 			p.setTextSize(50);
-			canvas.drawText("未找到歌词", mX, mMiddleY, p);
+			canvas.drawText("未找到歌词", mX-100, mMiddleY, p);
 			return;
 		}
 		p.setTextAlign(Paint.Align.CENTER);
