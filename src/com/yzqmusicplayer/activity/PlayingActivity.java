@@ -199,8 +199,10 @@ public class PlayingActivity extends Activity {
 			lrcUtil = new LrcUtil(getAssets().open(Trans2PinYin.trans2PinYin(currentMusic.getTitle())+".lrc"));
 			playing_text_lrc.init(Trans2PinYin.trans2PinYin(currentMusic.getTitle())+".lrc");
 		} catch (IOException e) {
-			e.printStackTrace();
+			ToastInfo(R.string.notfind_lrc);
 		}
+		if(lrcUtil==null)
+			return;
 		final List<Integer> lrctime = lrcUtil.getTimes();
 		int position = 0;
 		for (int i = 0; i < lrctime.size(); i++) {
@@ -238,7 +240,7 @@ public class PlayingActivity extends Activity {
 						e.printStackTrace();
 					}
 					i++;
-					if (i >= lrctime.size())
+					if (i+1 >= lrctime.size())
 						break;
 				}
 				;
