@@ -240,6 +240,7 @@ public class PlayingActivity extends Activity {
 						e.printStackTrace();
 					}
 					i++;
+					//防止下标越界！
 					if (i+1 >= lrctime.size())
 						break;
 				}
