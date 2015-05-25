@@ -35,6 +35,7 @@ import com.yzqmusicplayer.service.PlayerService;
 import com.yzqmusicplayer.util.Iinfo;
 import com.yzqmusicplayer.util.LRCTextView;
 import com.yzqmusicplayer.util.LrcUtil;
+import com.yzqmusicplayer.util.Trans2PinYin;
 import com.yzqmusicplayer.util.Utils;
 
 public class PlayingActivity extends Activity {
@@ -195,7 +196,8 @@ public class PlayingActivity extends Activity {
 	private void initLrcThread(int currentPosition) {
 		LrcUtil lrcUtil = null;
 		try {
-			lrcUtil = new LrcUtil(getAssets().open("baimeigui.txt"));
+			lrcUtil = new LrcUtil(getAssets().open(Trans2PinYin.trans2PinYin(currentMusic.getTitle())+".lrc"));
+			playing_text_lrc.init(Trans2PinYin.trans2PinYin(currentMusic.getTitle())+".lrc");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

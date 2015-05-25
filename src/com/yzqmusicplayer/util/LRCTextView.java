@@ -28,20 +28,20 @@ public class LRCTextView extends TextView {
 	public LRCTextView(Context context) throws IOException {
 		super(context);
 		this.context=context;
-		init();
+	//	init();
 	}
 
 	public LRCTextView(Context context, AttributeSet attrs) throws IOException {
 		super(context, attrs);
 		this.context=context;
-		init();
+	//	init();
 	}
 
 	public LRCTextView(Context context, AttributeSet attrs, int defStyle)
 			throws IOException {
 		super(context, attrs, defStyle);
 		this.context=context;
-		init();
+	//	init();
 	}
 
 	@Override
@@ -89,11 +89,10 @@ public class LRCTextView extends TextView {
 		mMiddleY = h * 0.3f;
 	}
 
-	@SuppressLint("SdCardPath")
-	private void init() throws IOException {
+	public  void init(String musicName) throws IOException {
 		setFocusable(true);
 
-		LrcUtil lrcHandler = new LrcUtil(context.getAssets().open("baimeigui.txt"));
+		LrcUtil lrcHandler = new LrcUtil(context.getAssets().open(musicName));
 		mWordsList = lrcHandler.getWords();
 
 		mLoseFocusPaint = new Paint();
