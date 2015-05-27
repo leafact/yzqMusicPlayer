@@ -204,6 +204,8 @@ public class PlayingActivity extends Activity {
 		if(lrcUtil==null)
 			return;
 		final List<Integer> lrctime = lrcUtil.getTimes();
+		if(currentPosition>lrctime.get(lrctime.size()-1))
+			return;
 		int position = 0;
 		for (int i = 0; i < lrctime.size()-1; i++) {
 			if (currentPosition < lrctime.get(i)) {
