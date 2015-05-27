@@ -40,7 +40,7 @@ import com.yzqmusicplayer.util.Utils;
 
 public class PlayingActivity extends Activity {
 	private SeekBar mSeekbar;
-	private final int UPDATE_STARTTIME_AND_SEEKBOR = 1;
+	private final int UPDATE_STARTTIME_AND_SEEKBAR = 1;
 	private PlayerService mService = MainActivity.mService;
 	private Music currentMusic = mService.record
 			.get(mService.record.size() - 1);
@@ -161,7 +161,7 @@ public class PlayingActivity extends Activity {
 			@Override
 			public void handleMessage(android.os.Message msg) {
 				switch (msg.what) {
-				case UPDATE_STARTTIME_AND_SEEKBOR:
+				case UPDATE_STARTTIME_AND_SEEKBAR:
 					setStartTextAndSeekBarAndLRC();
 					break;
 				default:
@@ -261,7 +261,7 @@ public class PlayingActivity extends Activity {
 			@Override
 			public void run() {
 				if (!mService.isPause()) {
-					handler.sendEmptyMessage(UPDATE_STARTTIME_AND_SEEKBOR);
+					handler.sendEmptyMessage(UPDATE_STARTTIME_AND_SEEKBAR);
 				} else {
 					// 上面虽然暂停了，但是线程还在跑
 					System.out.println("暂停了但是我还在跑" + Thread.currentThread());

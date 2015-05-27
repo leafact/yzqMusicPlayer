@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.yzqmusicplayer.R;
 import com.yzqmusicplayer.SQLite.MyMusicDB;
+import com.yzqmusicplayer.activity.MainActivity;
 import com.yzqmusicplayer.model.Music;
 
 public class Utils {
@@ -154,9 +155,10 @@ public class Utils {
 		// 获取系统服务
 		NotificationManager manager = (NotificationManager) context
 				.getSystemService(context.NOTIFICATION_SERVICE);
-		// 设置通知栏点击后跳转的activity
+		// 设置通知栏点击后跳转的MainActivity
 		Intent intent = new Intent();
-		intent.setAction("com.yzqmusicplayer.activity.playing");
+		intent.setClass(context, MainActivity.class);
+		//intent.setAction("com.yzqmusicplayer.activity.MAIN");
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		// 将intent包装在PendingIntent中传递给系统通知栏
 		PendingIntent pintent = PendingIntent.getActivity(context, 0, intent,
