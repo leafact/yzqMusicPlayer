@@ -1,4 +1,4 @@
-package com.yzqmusicplayer.util;
+package com.yzqmusicplayer.Logic;
 
 import java.util.ArrayList;
 import java.util.List;
