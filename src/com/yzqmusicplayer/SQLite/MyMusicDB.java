@@ -8,7 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.yzqmusicplayer.model.Music;
+import com.yzqmusicplayer.entity.Music;
 
 public class MyMusicDB {
 	private SQLiteDatabase sdb;

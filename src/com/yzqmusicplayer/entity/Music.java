@@ -1,4 +1,4 @@
-package com.yzqmusicplayer.model;
+package com.yzqmusicplayer.entity;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

@@ -14,7 +14,7 @@ import android.os.IBinder;
 
 import com.example.yzqmusicplayer.R;
 import com.yzqmusicplayer.activity.PlayingActivity;
-import com.yzqmusicplayer.model.Music;
+import com.yzqmusicplayer.entity.Music;
 import com.yzqmusicplayer.util.Iinfo;
 import com.yzqmusicplayer.util.Utils;
 

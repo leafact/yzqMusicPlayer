@@ -1,4 +1,4 @@
-package com.yzqmusicplayer.model;
+package com.yzqmusicplayer.entity;
 
 public class MyLrc implements Comparable<Object>{
 	private int time;

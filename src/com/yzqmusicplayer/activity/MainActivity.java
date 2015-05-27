@@ -51,7 +51,7 @@ import com.example.yzqmusicplayer.R;
 import com.yzqmusicplayer.Logic.MyLocalMusicListViewAdapter;
 import com.yzqmusicplayer.Logic.MyMusicQueueListViewAdapter;
 import com.yzqmusicplayer.Logic.MyViewPagerAdapter;
-import com.yzqmusicplayer.model.Music;
+import com.yzqmusicplayer.entity.Music;
 import com.yzqmusicplayer.service.PlayerService;
 import com.yzqmusicplayer.service.PlayerService.MyBinder;
 import com.yzqmusicplayer.util.Iinfo;

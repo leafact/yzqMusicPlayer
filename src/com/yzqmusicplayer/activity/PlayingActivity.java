@@ -29,8 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yzqmusicplayer.R;
-import com.yzqmusicplayer.model.Music;
-import com.yzqmusicplayer.model.MyLrc;
+import com.yzqmusicplayer.entity.Music;
+import com.yzqmusicplayer.entity.MyLrc;
 import com.yzqmusicplayer.service.PlayerService;
 import com.yzqmusicplayer.util.Iinfo;
 import com.yzqmusicplayer.util.LRCTextView;

@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.yzqmusicplayer.R;
-import com.yzqmusicplayer.model.Music;
+import com.yzqmusicplayer.entity.Music;
 
 public class MyMusicQueueListViewAdapter extends BaseAdapter {
 

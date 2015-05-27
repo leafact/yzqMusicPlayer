@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import com.yzqmusicplayer.model.MyLrc;
+import com.yzqmusicplayer.entity.MyLrc;
 
 //对歌词进行解析
 public class LrcUtil {

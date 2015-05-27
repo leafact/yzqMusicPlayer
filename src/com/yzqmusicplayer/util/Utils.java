@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.example.yzqmusicplayer.R;
 import com.yzqmusicplayer.SQLite.MyMusicDB;
 import com.yzqmusicplayer.activity.MainActivity;
-import com.yzqmusicplayer.model.Music;
+import com.yzqmusicplayer.entity.Music;
 
 public class Utils {
 	public static Notification notify;
