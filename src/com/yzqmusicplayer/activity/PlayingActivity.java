@@ -208,7 +208,7 @@ public class PlayingActivity extends Activity {
 			return;
 		int position = 0;
 		for (int i = 0; i < lrctime.size()-1; i++) {
-			if (currentPosition < lrctime.get(i)) {
+			if (currentPosition < lrctime.get(0)) {
 				position = 0;
 				break;
 			} else if (currentPosition > lrctime.get(i)

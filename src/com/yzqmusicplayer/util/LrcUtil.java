@@ -16,16 +16,6 @@ import com.yzqmusicplayer.model.MyLrc;
 //对歌词进行解析
 public class LrcUtil {
 
-	public static void main(String[] args) {
-		LrcUtil lrc = null;
-		try {
-			lrc = new LrcUtil(new FileInputStream("aaa.txt"));
-			lrc.getWords();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private static TreeSet<MyLrc> tree;
 
 	// 将对应的lrc文件转化为treeMap,分别对应的时间以及歌词
@@ -74,7 +64,7 @@ public class LrcUtil {
 		}
 		tree = treeset;
 	}
-
+	//获得lrc文件的歌词点的列表
 	public List<String> getWords() {
 		List<String> list = new ArrayList<String>();
 		Iterator<MyLrc> it = tree.iterator();
@@ -84,7 +74,7 @@ public class LrcUtil {
 		}
 		return list;
 	}
-
+    //获得lrc文件的时间点的列表
 	public List<Integer> getTimes() {
 		List<Integer> list = new ArrayList<Integer>();
 		Iterator<MyLrc> it = tree.iterator();

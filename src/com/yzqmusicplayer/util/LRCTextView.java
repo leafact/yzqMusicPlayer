@@ -28,20 +28,17 @@ public class LRCTextView extends TextView {
 	public LRCTextView(Context context) throws IOException {
 		super(context);
 		this.context = context;
-		// init();
 	}
 
 	public LRCTextView(Context context, AttributeSet attrs) throws IOException {
 		super(context, attrs);
 		this.context = context;
-		// init();
 	}
 
 	public LRCTextView(Context context, AttributeSet attrs, int defStyle)
 			throws IOException {
 		super(context, attrs, defStyle);
 		this.context = context;
-		// init();
 	}
 
 	@Override
