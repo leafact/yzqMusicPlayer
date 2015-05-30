@@ -1,5 +1,4 @@
 *.class
-*.jar
 *.war
 *.ear
 *.log
@@ -10,7 +9,6 @@ target
 work
 .DS_Store
 .db
-libs
 .idea
 *.iml
 nb-configuration.xml
