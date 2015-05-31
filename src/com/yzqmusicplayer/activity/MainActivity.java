@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -93,8 +95,8 @@ public class MainActivity extends Activity {
 	private MyMusicQueueListViewAdapter musicQueueListViewAdapter;
 	// 广播改变音乐
 	private MusicReceiver musicReceiver;
-	// 本来想按两下退出的,由于播放器按退出activity处于onstop状态,不是销毁
-	private boolean isExit = false;
+	//判断来电去电前播放器的状态
+	private boolean isPlayBeforePhoneCall = false;
 
 	public static PlayerService mService;
 	private ServiceConnection conn;
@@ -381,11 +383,10 @@ public class MainActivity extends Activity {
 		filter.addAction("com.yzqmusicplayer.activity.changeplayTopauseButton");
 		// 改变歌曲和歌手
 		filter.addAction("com.yzqmusicplayer.activity.changeSongAndSinger");
-		// 当电话来的时候
-		// filter.addAction(TelephonyManager.EXTRA_STATE_RINGING);
-		// 当电话挂断的时候
-		// filter.addAction(TelephonyManager.EXTRA_STATE_IDLE);
-		// filter.addAction(TelephonyManager.EXTRA_STATE_OFFHOOK);
+		// 当电话状态改变的时候
+		filter.addAction("android.intent.action.PHONE_STATE");
+		// 当打电话的时候，去电也会发出android.intent.action.PHONE_STATE广播，这里不再特别加入去电广播。
+		// filter.addAction("android.intent.action.NEW_OUTGOING_CALL");
 		// 我的收藏
 		filter.addAction("com.yzq.musicplayer.notifyCollectDataChanged");
 		registerReceiver(musicReceiver, filter);
@@ -413,7 +414,8 @@ public class MainActivity extends Activity {
 				.append("  歌手名:  " + music.getArtist() + "\n")
 				.append("  歌曲时长:  " + music.getStringDuration() + "\n")
 				.append("  歌曲大小:" + music.getStringSize() + "\n")
-				.append("  歌曲位置:" + music.getUrl() + "\n");;
+				.append("  歌曲位置:" + music.getUrl() + "\n");
+		;
 		AlertDialog builder = new AlertDialog.Builder(context,
 				AlertDialog.THEME_HOLO_LIGHT).setTitle(music.getTitle())
 				.setMessage(information).create();
@@ -473,7 +475,7 @@ public class MainActivity extends Activity {
 					public void onResults(Bundle results) {
 						ArrayList<String> rs = results != null ? results
 								.getStringArrayList(RESULTS_RECOGNITION) : null;
-						if (rs != null && rs.size()!=0) {
+						if (rs != null && rs.size() != 0) {
 							searchText.setText(rs.get(0).subSequence(0,
 									rs.get(0).length() - 1));
 						}
@@ -548,10 +550,10 @@ public class MainActivity extends Activity {
 					ToastInfo("未找到音乐");
 					// 判断开始暂停，按钮的改变在服务中发送广播
 				} else if (mService.isPause()) {
-					//从暂停到开始
+					// 从暂停到开始
 					mService.pauseToplay();
 				} else {
-					//从开始到暂停
+					// 从开始到暂停
 					mService.playToPause();
 				}
 				break;
@@ -659,7 +661,7 @@ public class MainActivity extends Activity {
 				}
 				if (addFlag) {
 					musicQueueListData.add(add);
-					List<Music> temp=new ArrayList<Music>();
+					List<Music> temp = new ArrayList<Music>();
 					temp.addAll(musicQueueListData);
 					System.out.println(temp.size());
 					musicQueueListData.clear();
@@ -703,8 +705,55 @@ public class MainActivity extends Activity {
 						.getCollectMusic(MainActivity.this));
 				collcectMusicListViewAdapter.notifyDataSetChanged();
 			}
+			// 注意：来电去电都会改变PHONE_STATE，只是ACTION_NEW_OUTGOING_CALL能判断是这是去电
+			// 在这里完全可以用PHONE_STATE来改变音乐播放状态。
+			// else
+			// if(Intent.ACTION_NEW_OUTGOING_CALL.equals(intent.getAction()))
+			// {
+			// if(!mService.isPause())
+			// {
+			// mService.playToPause();
+			// }
+			// }
+			else if ("android.intent.action.PHONE_STATE".equals(intent
+					.getAction())) {
+				TelephonyManager tm = (TelephonyManager) context
+						.getSystemService(Context.TELEPHONY_SERVICE);
+				tm.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
+			}
 
 		}
+
+		// 电话状态改变的监听
+		PhoneStateListener listener = new PhoneStateListener() {
+
+			@Override
+			public void onCallStateChanged(int state, String incomingNumber) {
+				// TODO Auto-generated method stub
+				// state 当前状态 incomingNumber,貌似没有去电的API
+				super.onCallStateChanged(state, incomingNumber);
+				switch (state) {
+				case TelephonyManager.CALL_STATE_IDLE:
+					System.out.println("挂断");
+					//需要判断之前电话之前是否是播放的，是的话再继续播放，防止用户之前就暂停，接完电话就自动播放的bug
+					if (mService.isPause()&&isPlayBeforePhoneCall) {
+						mService.pauseToplay();
+						isPlayBeforePhoneCall=false;
+					}
+					break;
+				case TelephonyManager.CALL_STATE_OFFHOOK:
+					System.out.println("接听");
+				case TelephonyManager.CALL_STATE_RINGING:
+					// 输出来电号码
+					System.out.println("响铃:来电号码" + incomingNumber);
+					if (!mService.isPause()) {
+						mService.playToPause();
+						isPlayBeforePhoneCall=true;
+					}
+					break;
+				}
+			}
+		};
 
 	}
 
